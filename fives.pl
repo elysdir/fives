@@ -33,8 +33,6 @@ positions, because the second and fourth letters in `chaos` (H and O) appear in
 
 TODOs:
 
-TODO: Check in to GitHub.
-
 TODO: Translate into JS.
 
 TODO: Maybe indicate which letters are definitely not in the word? (All the
