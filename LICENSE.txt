@@ -1,0 +1,38 @@
+The parts of this code that were written by Jed Hartman are hereby released into
+the public domain. Below is the CC0 license to indicate that. I of course can’t
+make the word lists public domain, because they weren’t written by me; see
+below. However, you may use my collated and modified versions of the word lists
+in any way and for any purpose if you keep the SCOWL copyright notice with them.
+
+<p xmlns:dct="http://purl.org/dc/terms/" xmlns:vcard="http://www.w3.org/2001/vcard-rdf/3.0#">
+  <a rel="license"
+     href="http://creativecommons.org/publicdomain/zero/1.0/">
+    <img src="http://i.creativecommons.org/p/zero/1.0/88x31.png" style="border-style: none;" alt="CC0" />
+  </a>
+  <br />
+  To the extent possible under law,
+  <a rel="dct:publisher"
+     href="https://www.kith.org/jed/">
+    <span property="dct:title">Jed Hartman</span></a>
+  has waived all copyright and related or neighboring rights to
+  <span property="dct:title">Fives (the parts created by Jed)</span>.
+This work is published from:
+<span property="vcard:Country" datatype="dct:ISO3166"
+      content="US" about="https://www.kith.org/jed/">
+  United States</span>.
+</p>
+
+I derived the word lists derive from SCOWL (http://wordlist.aspell.net/). Here’s
+the copyright notice for SCOWL:
+
+  Copyright 2000-2018 by Kevin Atkinson
+
+  Permission to use, copy, modify, distribute and sell these word
+  lists, the associated scripts, the output created from the scripts,
+  and its documentation for any purpose is hereby granted without fee,
+  provided that the above copyright notice appears in all copies and
+  that both that copyright notice and this permission notice appear in
+  supporting documentation. Kevin Atkinson makes no representations
+  about the suitability of this array for any purpose. It is provided
+  "as is" without express or implied warranty.
+
