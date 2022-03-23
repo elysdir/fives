@@ -38,27 +38,13 @@ TODO: Translate into JS.
 TODO: Maybe indicate which letters are definitely not in the word? (All the
 letters in all the “no match” guesses.)
 
-TODO: Automatically track and show the letters that are and aren’t possible for
-each spot? Would help a lot, but maybe makes it too easy for the player. Maybe
-make this an easy-mode switch that the player can turn on? Rough idea of how to
-implement it: have a possible-letters string for each position. Start with the
-full alphabet in that position, but for any slot that has the full alphabet
-possible, display as something like “(any)”. During the compare-with-answer-
-letters loop, if there’s a match, then replace the possible-letters-for-this-
-position string with the intersection of that string and the guess. (To find
-letters in common, use one of the routines at
-(https://www.perlmonks.org/?node_id=421394), or just do a loop on the letters in
-the guess and use index() to figure out whether they’re in the possible-letters
-string; I think for my very specific purposes, that’s simpler than messing with
-hashes and such.) If there isn’t a match for a given position in the answer,
-then *remove* each character in this guess from the possible-letters string for
-that answer. (This does mean that the possible-letters string can be quite long;
-maybe instead of the “(any)” special case, just say that if the string is longer
-than 5 letters, display it as “(many)”.) (Use s/$letter// to remove.)
-
-Alternative TODO: Let user specify a letter, or a group of letters, for each
+Optional TODO: Let user specify a letter, or a group of letters, for each
 position? Not sure what the text interface for this would be. Think about it.
 Maybe a free-form text field that they can type anything into?
+
+TODO: Handle /quit better. (Just saying the answer is correct is a kludge.)
+
+TODO: Detect and handle error in case of control character or "[" in guess.
 
 TODO: Read all words from files instead of hardcoded?
 
@@ -154,6 +140,7 @@ my @all_guesses = ();
 
 my @buckets = ([@list0], [@list1], [@list2], [@list3], [@list4]);
 
+# Current possible letters for each of the five letter positions.
 my @possible_letters = ($full_alphabet, $full_alphabet, $full_alphabet,
 $full_alphabet, $full_alphabet);
 
@@ -161,6 +148,7 @@ my @loop_numbers = (0..4);
 my $guess = "";
 my $num_guesses = 0;
 my $match = 0;
+my $mode = "hard";
 
 # Pick a word at random from the list of possible answers.
 my $answer = $answers_possible[ rand @answers_possible ];
@@ -170,7 +158,10 @@ print "\nI have picked a five-letter English word with no repeating ";
 print "letters.\n\n";
 print "Enter a guess that’s also a five-letter English word with no repeating ";
 print "letters, and I’ll tell you which of the letter positions in the answer ";
-print "match a letter in your guess.\n";
+print "match a letter in your guess.\n\n";
+print "To quit, enter /quit as your guess\n\n";
+print "To switch to easy mode, enter /easy\n\n";
+print "To switch back to hard mode, enter /hard\n\n";
 
 # Request each guess and process it, until the player guesses correctly.
 while (1)
@@ -178,12 +169,33 @@ while (1)
 
   print "\n";
 
-  # Print all five of the letter-position buckets:
-  for my $array_ref ( @buckets ) {
-    print "_____ [ @$array_ref ]\n";
+  # Print all five of the letter-position buckets.
+  for (@loop_numbers) {
+    if ($mode eq "easy")
+    {
+			if (length($possible_letters[$_]) > 5)
+			{
+				print "(many)";
+			}
+			else
+			{
+				print $possible_letters[$_];
+  			my $spaces_to_print = 6 - length($possible_letters[$_]);
+  			for (my $i = 0; $i < $spaces_to_print; $i++)
+  			{
+  			  print " ";
+  			}
+			}
+    }
+    else
+    {
+      print "______";
+    }
+    print " [ @{$buckets[$_]} ]\n";
+    
   }
 
-  print "No match: [ @no_match_list ]\n";
+  print "Guesses with no match: [ @no_match_list ]\n";
 
   print "Unguessed letters: $unguessed_letters\n\n";
 
@@ -201,11 +213,28 @@ while (1)
     # Convert to lowercase.
     $guess = lc $guess;
 
-    if ($guess eq "answer?")
+    if ($guess eq "/answer")
     {
       print "Answer is: $answer\n";
       next;
     }
+
+		if ($guess eq "/quit")
+		{
+			$guess = $answer;
+		}
+
+		if ($guess eq "/easy")
+		{
+			$mode = "easy";
+			next;
+		}
+
+		if ($guess eq "/hard")
+		{
+			$mode = "hard";
+			next;
+		}
 
     # Check whether the guess has been guessed before.
     if (any { /^$guess$/ } @all_guesses)
@@ -245,11 +274,46 @@ while (1)
   {
     my $answer_letter = substr($answer, $_, 1);
 
+    # If this letter is in the guess.
     if (index($guess, $answer_letter) >= 0)
     {
       push @{$buckets[$_]}, $guess;
       $match = 1;
+      
+      # Update the list of possible letters for this position.
+      my $this_possible_letters = $possible_letters[$_];
+      my $new_possible_letters = "";
+      for (@loop_numbers)
+      {
+        my $guess_letter = substr($guess, $_, 1);
+        if (index($this_possible_letters, $guess_letter) >= 0)
+        {
+          $new_possible_letters .= $guess_letter;
+        }
+      }
+      # Alphabetize the new possible letters.
+      $new_possible_letters = join '', sort split(//, $new_possible_letters);
+      @possible_letters[$_] = $new_possible_letters;
+      
     }
+    else # This letter isn’t in the guess.
+    {
+
+      # Update the list of possible letters for this position.
+      my $new_possible_letters = $possible_letters[$_];
+      for (@loop_numbers)
+      {
+        my $guess_letter = substr($guess, $_, 1);
+        
+        # Remove this letter from the possible letters for this position.
+        $new_possible_letters =~ s/$guess_letter//;
+      }
+      # Alphabetize the new possible letters.
+      $new_possible_letters = join '', sort split(//, $new_possible_letters);
+      @possible_letters[$_] = $new_possible_letters;
+
+    }
+
   }
 
   # If nothing matched, add this word to the list of words that didn’t match.
@@ -269,7 +333,12 @@ while (1)
 
 }
 
-print "You have correctly guessed the answer in $num_guesses guesses!\n\n";
+print "You have correctly guessed the answer in $num_guesses guess";
+if ($num_guesses > 1)
+{
+  print "es";
+}
+print "!\n\n";
 print "Here’s a list of the guesses you made:\n@all_guesses\n\n";
 
 
