@@ -292,7 +292,7 @@ while (1)
         }
       }
       # Alphabetize the new possible letters.
-      $new_possible_letters = join '', sort split(//, $new_possible_letters);
+      $new_possible_letters = join('', sort(split(//, $new_possible_letters)));
       @possible_letters[$_] = $new_possible_letters;
 
     }
@@ -309,7 +309,7 @@ while (1)
         $new_possible_letters =~ s/$guess_letter//;
       }
       # Alphabetize the new possible letters.
-      $new_possible_letters = join '', sort split(//, $new_possible_letters);
+      $new_possible_letters = join('', sort(split(//, $new_possible_letters)));
       @possible_letters[$_] = $new_possible_letters;
 
     }
