@@ -173,26 +173,26 @@ while (1)
   for (@loop_numbers) {
     if ($mode eq "easy")
     {
-			if (length($possible_letters[$_]) > 5)
-			{
-				print "(many)";
-			}
-			else
-			{
-				print $possible_letters[$_];
-  			my $spaces_to_print = 6 - length($possible_letters[$_]);
-  			for (my $i = 0; $i < $spaces_to_print; $i++)
-  			{
-  			  print " ";
-  			}
-			}
+      if (length($possible_letters[$_]) > 5)
+      {
+        print "(many)";
+      }
+      else
+      {
+        print $possible_letters[$_];
+        my $spaces_to_print = 6 - length($possible_letters[$_]);
+        for (my $i = 0; $i < $spaces_to_print; $i++)
+        {
+          print " ";
+        }
+      }
     }
     else
     {
       print "______";
     }
     print " [ @{$buckets[$_]} ]\n";
-    
+
   }
 
   print "Guesses with no match: [ @no_match_list ]\n";
@@ -219,22 +219,22 @@ while (1)
       next;
     }
 
-		if ($guess eq "/quit")
-		{
-			$guess = $answer;
-		}
+    if ($guess eq "/quit")
+    {
+      $guess = $answer;
+    }
 
-		if ($guess eq "/easy")
-		{
-			$mode = "easy";
-			next;
-		}
+    if ($guess eq "/easy")
+    {
+      $mode = "easy";
+      next;
+    }
 
-		if ($guess eq "/hard")
-		{
-			$mode = "hard";
-			next;
-		}
+    if ($guess eq "/hard")
+    {
+      $mode = "hard";
+      next;
+    }
 
     # Check whether the guess has been guessed before.
     if (any { /^$guess$/ } @all_guesses)
@@ -279,7 +279,7 @@ while (1)
     {
       push @{$buckets[$_]}, $guess;
       $match = 1;
-      
+
       # Update the list of possible letters for this position.
       my $this_possible_letters = $possible_letters[$_];
       my $new_possible_letters = "";
@@ -294,7 +294,7 @@ while (1)
       # Alphabetize the new possible letters.
       $new_possible_letters = join '', sort split(//, $new_possible_letters);
       @possible_letters[$_] = $new_possible_letters;
-      
+
     }
     else # This letter isn’t in the guess.
     {
@@ -304,7 +304,7 @@ while (1)
       for (@loop_numbers)
       {
         my $guess_letter = substr($guess, $_, 1);
-        
+
         # Remove this letter from the possible letters for this position.
         $new_possible_letters =~ s/$guess_letter//;
       }
