@@ -178,94 +178,94 @@ while (1)
 
   print "\n";
 
-	# Print all five of the letter-position buckets:
-	for my $array_ref ( @buckets ) {
-			print "_____ [ @$array_ref ]\n";
-	}
-	
-	print "No match: [ @no_match_list ]\n";
-	
-	print "Unguessed letters: $unguessed_letters\n\n";
-	
-	my $valid_guess = 0;
-	
-	while ($valid_guess == 0)
+  # Print all five of the letter-position buckets:
+  for my $array_ref ( @buckets ) {
+    print "_____ [ @$array_ref ]\n";
+  }
+
+  print "No match: [ @no_match_list ]\n";
+
+  print "Unguessed letters: $unguessed_letters\n\n";
+
+  my $valid_guess = 0;
+
+  while ($valid_guess == 0)
   {
 
-		print "Your guess? ";
+    print "Your guess? ";
 
-		$guess = <>;
+    $guess = <>;
 
-		chop $guess;
-		
-		# Convert to lowercase.
-		$guess = lc $guess;
-		
-		if ($guess eq "answer?")
-		{
-		  print "Answer is: $answer\n";
-		  next;
-		}
+    chop $guess;
+
+    # Convert to lowercase.
+    $guess = lc $guess;
+
+    if ($guess eq "answer?")
+    {
+      print "Answer is: $answer\n";
+      next;
+    }
 
     # Check whether the guess has been guessed before.
     if (any { /^$guess$/ } @all_guesses)
-		{
-		  print "You’ve guessed that word before.\n\n";
-		  next;
-		}
+    {
+      print "You’ve guessed that word before.\n\n";
+      next;
+    }
 
     # Check whether the guess is on the list of allowed guess words.
     if (any { /^$guess$/ } @guesses_allowed)
-		{
-		  $valid_guess = 1;
-		}
-		else
-		{
-		  print "Invalid guess; I don't know that word.\n\n";
-		}
+    {
+      $valid_guess = 1;
+    }
+    else
+    {
+      print "Invalid guess; I don't know that word.\n\n";
+    }
 
   }
 
   # Keep track of how many guesses the player has made.
-	$num_guesses++;
+  $num_guesses++;
 
   # Add this guess to the list of all guesses made.
-	push @all_guesses, $guess;
+  push @all_guesses, $guess;
 
   # If guess is correct, end.
-	if ($guess eq $answer)
-	{
-	  last;
-	}
+  if ($guess eq $answer)
+  {
+    last;
+  }
 
   # Otherwise, for each letter of the answer, check whether that letter is in
   # the guess.
   $match = 0;
-	for (@loop_numbers)
-	{
-	  my $answer_letter = substr($answer, $_, 1);
+  for (@loop_numbers)
+  {
+    my $answer_letter = substr($answer, $_, 1);
 
-	  if (index($guess, $answer_letter) >= 0)
-	  {
-	    push @{$buckets[$_]}, $guess;
-	    $match = 1;
-	  }
-	}
+    if (index($guess, $answer_letter) >= 0)
+    {
+      push @{$buckets[$_]}, $guess;
+      $match = 1;
+    }
+  }
 
   # If nothing matched, add this word to the list of words that didn’t match.
-	if ($match == 0)
-	{
-	  push @no_match_list, $guess;
-	}
+  if ($match == 0)
+  {
+    push @no_match_list, $guess;
+  }
 
   # For each letter of the guess, remove that letter from the unguessed letters.
-	for (@loop_numbers)
-	{
-	  my $guess_letter = substr($guess, $_, 1);
+  for (@loop_numbers)
+  {
+    my $guess_letter = substr($guess, $_, 1);
 
     # Remove the letter from the list of unguessed letters.
-	  $unguessed_letters =~ s/$guess_letter//;
-	}
+    $unguessed_letters =~ s/$guess_letter//;
+  }
 
 }
 
