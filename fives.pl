@@ -42,8 +42,6 @@ Optional TODO: Let user specify a letter, or a group of letters, for each
 position? Not sure what the text interface for this would be. Think about it.
 Maybe a free-form text field that they can type anything into?
 
-TODO: Handle /quit better. (Just saying the answer is correct is a kludge.)
-
 TODO: Detect and handle error in case of control character or "[" in guess.
 
 TODO: Read all words from files instead of hardcoded?
@@ -167,6 +165,8 @@ print "To switch back to hard mode, enter /hard\n\n";
 while (1)
 {
 
+  my $meta = 0;
+
   print "\n";
 
   # Print all five of the letter-position buckets.
@@ -216,24 +216,28 @@ while (1)
     if ($guess eq "/answer")
     {
       print "Answer is: $answer\n";
-      next;
+      $meta = 1;
+      last;
     }
 
     if ($guess eq "/quit")
     {
-      $guess = $answer;
+      $meta = 1;
+      last;
     }
 
     if ($guess eq "/easy")
     {
       $mode = "easy";
-      next;
+      $meta = 1;
+      last;
     }
 
     if ($guess eq "/hard")
     {
       $mode = "hard";
-      next;
+      $meta = 1;
+      last;
     }
 
     # Check whether the guess has been guessed before.
@@ -255,6 +259,15 @@ while (1)
 
   }
 
+	if ($guess eq "/quit")
+	{
+		last;
+	}
+
+  if ($meta == 1)
+  {
+    next;
+  }
   # Keep track of how many guesses the player has made.
   $num_guesses++;
 
@@ -333,12 +346,20 @@ while (1)
 
 }
 
-print "You have correctly guessed the answer in $num_guesses guess";
-if ($num_guesses > 1)
+if ($guess eq $answer)
 {
-  print "es";
+  print "You have correctly guessed the answer in $num_guesses guess";
+	if ($num_guesses > 1)
+	{
+		print "es";
+	}
+	print "!\n\n";
 }
-print "!\n\n";
+else
+{
+  print "You are quitting. The answer is $answer.\n\n";
+}
+
 print "Here’s a list of the guesses you made:\n@all_guesses\n\n";
 
 
